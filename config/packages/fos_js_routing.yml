@@ -1,0 +1,2 @@
+fos_js_routing:
+    routes_to_expose: [ ajax_response_time,ajax_statut_code,ajax_image,ajax_ping_pong,ajax_headers ]

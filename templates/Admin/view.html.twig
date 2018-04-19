@@ -1,0 +1,224 @@
+{% extends 'base.html.twig' %}
+{% block title %} Résultat du site : {{website.name}}{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-header">
+                        Infos principales
+                    </div>
+                    <div class="card-body">
+                        {#                        {{dump(website)}}#}
+                        Nom de domaine : {{website.url["host"]}}<br/>
+                        Nom du site : {{website.name}}<br/>
+                        Description : {{website.description}}<br/>
+                        Ipv4 : {{result["Ip4"]}}<br/>
+                        Ipv6 : {{result["Ip6"]}}<br/>
+                      
+                        {%if result["StatutCode"] is defined %} Code de réponse :  {%if result["StatutCode"] > 299 %}<span class="badge badge-warning" id="statut_code"> {{result["StatutCode"]}} </span>{%else%}<span class="badge badge-success" id="statut_code"> {{result["StatutCode"]}}</span>{%endif%}{%endif%} 
+                  
+                        {%if result["ResponseTime"] is defined %} Temps de réponse :{%if result["ResponseTime"] > 1.1 %}<span class="badge badge-warning"  id="response_time"> {{result["ResponseTime"]*1000}} ms</span>{%else%}<span class="badge badge-success"  id="response_time"> {{result["ResponseTime"]*1000}} ms</span>{%endif%} <br/>{%endif%}
+                        
+                        <h3> Entêtes de réponse</h3>
+                        {%for h in result["Headers"] %}
+                            {{h}}<br/>
+                        {%endfor%}
+                        {#                        {{dump(result)}}#}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card-header">
+                    Divers
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-8"><a href="{{result["Url"]}}"><img id="image" class="img-fluid" src="{{result["Image"]}}"/></a></div>
+                            <div class="col-4"> 
+                                Début de la surveillance : {{website.createdAt | date('Y/m/d H:i:s')}}<br/>
+                                Dernière mise à jour : {{website.updatedAt | date('Y/m/d H:i:s')}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        Outils
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-8">
+                                <button class="btn btn-info sync" data-function="ping_pong">Ping</button>
+                                <button class="btn btn-info sync">Nom de domaine</button>
+                                <button class="btn btn-info sync">Entêtes</button>
+                                <button class="btn btn-info sync" data-function="image">Image du site</button>
+                                <button class="btn btn-info sync" data-function="response_time">Response Time</button>
+                                <button class="btn btn-info sync" data-function="statut_code">Statut Code</button>
+                            </div>
+                            <div class="col-4">                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        Rapport de Qualité SSL
+                    </div>
+                    <div class="card-body">
+                        <h4>Protocoles disponibles :</h4>
+                        <div class="row">                            
+                            <div class="col-12 text-center">
+                                {% for i in website.ssl.protocols %}
+                                    {%if i == "TLSv1_2" %}
+                                        {% set p = "success" %}
+                                    {%elseif i == "TLSv1_1" or i == "TLSv1"%}
+                                        {% set p = "info" %}
+                                    {%else %}                                        
+                                        {% set p = "error" %}
+                                    {%endif%}
+                                    <span class="badge badge-{{p}}"> {{i}}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <h4>Score général :</h4>
+                        <div class="row">                            
+                            <div class="col-6 text-center" style="font-size:50px;">
+                                <span class="fa-layers fa-fw text-{{gradestate}}">
+                                    <i class="fas fa-circle"></i>
+                                    <span class="fa-layers-text fa-inverse" data-fa-transform="shrink-8" style="font-weight:900">{{website.ssl.RankNote}}</span>                                                                    
+                                </span>
+
+                                <div class="progress mb-1">
+                                    <div class="progress-bar {% if website.ssl.ScoreNote >= 75 %} bg-success{% elseif  website.ssl.ScoreNote >= 50 %} bg-info{% elseif  website.ssl.ScoreNote >= 25 %} bg-warning{% else %} bg-danger{% endif %}" role="progressbar" 
+                                         style="width:{{ website.ssl.ScoreNote}}%;" 
+                                         aria-valuenow="{{ website.ssl.ScoreNote}}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ website.ssl.ScoreNote}}%</div>
+                                </div>               
+                                <div class="progress mb-1">
+                                    <div class="progress-bar{% if website.ssl.ProtocolsNote >= 75 %} bg-success{% elseif  website.ssl.ProtocolsNote >= 50 %} bg-info{% elseif  website.ssl.ProtocolsNote >= 25 %} bg-warning{% else %} bg-danger{% endif %}" role="progressbar" 
+                                         style="width:{{ website.ssl.ProtocolsNote}}%;" 
+                                         aria-valuenow="{{ website.ssl.ProtocolsNote}}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ website.ssl.ProtocolsNote}}%</div>
+                                </div>                
+                                <div class="progress mb-1">
+                                    <div class="progress-bar{% if website.ssl.KeyExchangeNote >= 75 %} bg-success{% elseif  website.ssl.KeyExchangeNote >= 50 %} bg-info{% elseif  website.ssl.KeyExchangeNote >= 25 %} bg-warning{% else %} bg-danger{% endif %}" role="progressbar" 
+                                         style="width:{{ website.ssl.KeyExchangeNote}}%;" 
+                                         aria-valuenow="{{ website.ssl.KeyExchangeNote}}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ website.ssl.KeyExchangeNote}}%</div>
+                                </div>              
+                                <div class="progress ">
+                                    <div class="progress-bar{% if website.ssl.CipherStrengthsNote >= 75 %} bg-success{% elseif  website.ssl.CipherStrengthsNote >= 50 %} bg-info{% elseif  website.ssl.CipherStrengthsNote >= 25 %} bg-warning{% else %} bg-danger{% endif %}" role="progressbar" 
+                                         style="width:{{ website.ssl.CipherStrengthsNote}}%;" 
+                                         aria-valuenow="{{ website.ssl.CipherStrengthsNote}}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ website.ssl.CipherStrengthsNote}}%</div>
+                                </div>    
+                            </div>
+                            <div class="col-6">
+                                {%if website.ssl.error or website.ssl.danger or website.ssl.warning or website.ssl.success | length > 0 %}
+                                    <ul class="list-group">
+                                        {% for i in website.ssl.error %}
+                                            <li class="list-group-item list-group-item-dark">{{i}}</li>
+                                            {% endfor %}
+                                            {% for i in website.ssl.danger %}
+                                            <li class="list-group-item list-group-item-danger">{{i}}</li>
+                                            {% endfor %}
+                                            {% for i in website.ssl.warning %}
+                                            <li class="list-group-item list-group-item-warning">{{i}}</li>
+                                            {% endfor %}
+                                            {% for i in website.ssl.success %}
+                                            <li class="list-group-item list-group-item-success">{{i}}</li>
+                                            {% endfor %}
+                                    </ul>
+                                {% else%}
+                                    Aucunes bonnes pratiques ou mauvaise configutations de celles-ci n'ont étés détectées
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        Date : {{website.ssl.updatedAt | date('Y/m/d H:i:s')}} | Rapport cryptographique fourni par imirhil 
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block externalscript %}
+
+    <script>
+        $(document).ready(function () {
+
+            $(".sync").click(function () {
+                var ajaxRoute = $(this).attr("data-function");
+                $.ajax({
+                    type: "POST",
+                    url: Routing.generate("ajax_" + ajaxRoute, {id: "{{website.id}}"}),
+                    cache: false,
+                    dataType: 'json',
+                    beforeSend: function () {
+
+        {#                             $("#" + ligne + " .sync").find('[data-fa-processed]').toggleClass('fa-spinner').toggleClass('fa-spin').toggleClass('fa-sync');#}
+                            $(this).prop("disabled", true);
+        {#                             $("#back-catalog, #valider-commande").prop("aria-disabled", true).addClass('disabled');#}
+
+                        },
+                        success: function (response) {
+                            console.log(response['r']);
+                            console.log(ajaxRoute);
+
+                if (ajaxRoute === "response_time") {
+                    $('#' + ajaxRoute).text(response['r'] * 1000 +' ms');
+                    if (response['r'] < 1.1) {
+                        $('#' + ajaxRoute).addClass("badge-success");
+                    } else {
+                        $('#' + ajaxRoute).addClass("badge-warning");
+                    }
+                } else if (ajaxRoute === "statut_code") {
+                    $('#' + ajaxRoute).text(response['r']);
+                    if (response['r'] > 299) {
+                        $('#' + ajaxRoute).addClass("badge-warning");
+                    } else {
+                        $('#' + ajaxRoute).addClass("badge-success");
+                    }
+                } else if (ajaxRoute === "ping_pong") {
+                    $('#' + ajaxRoute).text(response['r']);
+                    if (response['r'] > 299) {
+                        $('#' + ajaxRoute).addClass("badge-warning");
+                    } else {
+                        $('#' + ajaxRoute).addClass("badge-success");
+                    }
+                } else if (ajaxRoute === "image") {
+                    $('#' + ajaxRoute).prop("src", response['r'] + '?' + (new Date().getTime()));
+                }
+
+                                    setTimeout(
+                                            function ()
+                                            {
+        {#                       $("#" + ligne + " .sync").find('[data-fa-processed]').toggleClass('fa-spinner').toggleClass('fa-spin').toggleClass('fa-sync');#}
+                                        $(this).prop("disabled", false);
+        {#                       $("#" + ligne + " .sync").removeClass('btn-warning').addClass('btn-info');
+                               $("#back-catalog, #valider-commande").prop("aria-disabled", false).removeClass('disabled');
+                               $("#total-price").text(response['totPanier']);
+                               $("#" + ligne + " .price-ligne").text(response['totLigne']);
+                               $("#" + ligne + " .price-ligne, #total-price").formatCurrency({colorize: true, region: 'fr'});
+                               if ($('#cart .btn-warning').length > 0) {
+                                   $("#valider-commande").prop("aria-disabled", true).addClass('disabled');
+                               }#}
+
+                                                           }, 800);
+
+                                               }
+
+
+                                           });
+
+                                       });
+                                   });
+
+    </script>
+{% endblock %}

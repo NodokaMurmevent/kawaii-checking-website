@@ -1,0 +1,69 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+
+index:
+    path: /
+    controller: App\Controller\DefaultController::index
+    
+admin:
+    path: /admin
+    controller: App\Controller\DefaultController::admin
+    
+website_check_dashboard:
+    path: /dashboard
+    controller: App\Controller\CheckController::index
+    
+website_check_list:
+    path: /websites
+    controller: App\Controller\WebSiteController::liste
+    
+website_check_add:
+    path: /websites/add
+    controller: App\Controller\WebSiteController::addwebsite
+    
+website_check_view:
+    path: /websites/{id}
+    controller: App\Controller\WebSiteController::view
+
+Ovh:
+    path: /ovh/{domain}
+    controller: App\Controller\OvhController::index
+
+    
+account:
+    path:     /account
+    defaults: { _controller: App\Controller\AccountController::index }
+    
+security_login:
+    path:     /login
+    defaults: { _controller: App\Controller\SecurityController::login }
+    
+security_logout:
+    path:     /logout
+    defaults: { _controller: App\Controller\SecurityController::logout }
+    
+    
+ajax_ping:
+    path:     /websites/ajax/ping/{id}/
+    defaults: { _controller: App\Controller\WebSiteController::ajaxPing}
+    
+ajax_response_time:
+    path:     /websites/ajax/response-time/{id}/
+    defaults: { _controller: App\Controller\WebSiteController::ajaxResponseTime}
+    
+ajax_statut_code:
+    path:     /websites/ajax/statut-code/{id}/
+    defaults: { _controller: App\Controller\WebSiteController::ajaxStatutCode}
+
+ajax_image:
+    path:     /websites/ajax/image/{id}/
+    defaults: { _controller: App\Controller\WebSiteController::ajaxImage}
+    
+ajax_ping_pong:
+    path:     /websites/ajax/ping-pong/{id}/
+    defaults: { _controller: App\Controller\WebSiteController::ajaxPingPong}
+    
+ajax_headers:
+    path:     /websites/ajax/headers/{id}/
+    defaults: { _controller: App\Controller\WebSiteController::ajaxHeaders}

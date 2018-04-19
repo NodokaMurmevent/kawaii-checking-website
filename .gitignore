@@ -1,10 +1,12 @@
 /.web-server-pid
 ./well-know
+
 # Parameters
 /app/config/parameters.yml
 /app/config/parameters.ini
 /build/
 /phpunit.xml
+
 # Cache, session files and logs (Symfony3)
 /var/*
 !/var/cache
@@ -17,18 +19,28 @@
 /var/sessions/*
 !var/sessions/.gitkeep
 !var/SymfonyRequirements.php
+
 # Les vendors 
 /vendor/
+
 # Assets and user uploads
 /web/bundles/
 /web/uploads/
+
 # Email spool folder
 /app/spool/*
 
 /app/bootstrap.php.cache
 /var/bootstrap.php.cache
 
-# PHPUnit
+.env
+/public/bundles/
+/public/uploads/
+/var/
+/vendor/
+
+.Halite.key
+
 /app/phpunit.xml
 /phpunit.xml
 
@@ -40,3 +52,7 @@
 
 #NetBeans
 ./nbproject/
+
+composer.lock
+
+symfony.lock
